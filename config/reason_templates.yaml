@@ -1,0 +1,6 @@
+templates:
+  DATE_ALIGNMENT: "The database amendment date is updated to align the record with the official effective date of the amendment."
+  REPEAL_DELETE: "Removed because the content was repealed or removed from the official schedule by the referenced legal instrument."
+  SCOPE_ADD_TEXT: "Added to reflect revised regulatory scope introduced by the referenced legal instrument."
+  ORDER_REMOVE_ENTRIES: "Removed because the entries no longer appear in the official schedule following the referenced Order."
+  TRACEABILITY_NOTE: "A note is added to document the regulatory action and preserve traceability."

@@ -1,0 +1,15 @@
+app:
+  env: dev
+  log_level: INFO
+
+database:
+  url: ${DATABASE_URL}
+
+storage:
+  driver: ${OBJECT_STORE_DRIVER}
+  base_path: ${OBJECT_STORE_BASE_PATH}
+
+llm:
+  provider: ${LLM_PROVIDER}
+  model: ${LLM_MODEL}
+  temperature: ${LLM_TEMPERATURE}

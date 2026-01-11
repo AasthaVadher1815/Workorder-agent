@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+dist/
+build/
+_object_store/
+*.xlsx
+*.zip
+# Alembic
+database/migrations/__pycache__/
+database/migrations/versions/__pycache__/
+
+# Database
+*.db
+*.sqlite

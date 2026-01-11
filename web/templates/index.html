@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Order Excel Processor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>📊 Work Order Processor</h1>
+                    <p class="tagline">Automated Excel Processing with LLM Context</p>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot online"></span>
+                    <span>Ready</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="processor-card">
+                <!-- Step 1: Upload -->
+                <section class="step-section">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h2>Upload Excel File</h2>
+                        <p class="step-description">Select your work order changes file</p>
+                    </div>
+                    
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" id="excelFile" name="excel_file" accept=".xlsx,.xls" hidden>
+                            
+                            <div class="upload-icon">📁</div>
+                            <p class="upload-title">Drop your Excel file here</p>
+                            <p class="upload-subtitle">or click to browse</p>
+                            <p class="upload-hint">Supported: .xlsx, .xls (max 50MB)</p>
+                            
+                            <div id="fileStatus" class="file-status"></div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Step 2: Configuration -->
+                <section class="step-section">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h2>Configuration</h2>
+                        <p class="step-description">Choose processing parameters</p>
+                    </div>
+
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <label>LLM Model</label>
+                            <select id="modelSelect" name="model_name">
+                                <option value="gpt-4-mini">GPT-4 Mini (Fast)</option>
+                                <option value="gpt-4">GPT-4 (Accurate)</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Budget)</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label>Context Source</label>
+                            <input type="text" value="work_orders_master.json" disabled>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3: Process -->
+                <section class="step-section">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h2>Process</h2>
+                        <p class="step-description">Start the automated processing</p>
+                    </div>
+
+                    <button id="processBtn" class="btn-process" disabled>
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">Process Excel</span>
+                    </button>
+                </section>
+            </div>
+
+            <!-- Status & Results -->
+            <div id="resultArea" class="result-area" style="display:none;">
+                <div id="statusBox" class="status-box"></div>
+                <div id="resultBox" class="result-box" style="display:none;"></div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p><strong>Work Order Processor</strong> • Powered by LLM</p>
+                <p class="footer-info">
+                    Automatically detects QS Number from Excel and loads context from master data
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

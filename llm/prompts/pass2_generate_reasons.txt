@@ -1,0 +1,7 @@
+Rewrite each change.reason to be a clean regulatory justification.
+Constraints:
+- One sentence
+- Human readable
+- Must not include internal codes or workflow labels
+- Must remain consistent with evidence_text
+Return same JSON with updated reason fields.
