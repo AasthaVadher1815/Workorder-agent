@@ -48,17 +48,30 @@ def load_master_json():
 
 def extract_qsid_context(master_data, qs_number):
     """Extract specific QS Number context from master JSON."""
-    if not master_data:
+    if not master_data or not qs_number:
         return None
+    
+    # Normalize search value
+    search_qs = str(qs_number).strip().upper()
     
     # Search through all records in the JSON
     for query_key, records in master_data.items():
         if isinstance(records, list):
             for record in records:
                 if isinstance(record, dict):
-                    qs = record.get("QS Number") or record.get("qs_number")
-                    if qs and str(qs).strip() == str(qs_number).strip():
-                        return record
+                    # Check multiple possible field names
+                    qs = (
+                        record.get("QS Number") or 
+                        record.get("QS_Number") or 
+                        record.get("QSNumber") or
+                        record.get("qs_number") or
+                        record.get("qsnumber")
+                    )
+                    
+                    if qs:
+                        record_qs = str(qs).strip().upper()
+                        if record_qs == search_qs:
+                            return record
     return None
 
 
@@ -97,8 +110,26 @@ def upload_file():
         # Load master context
         master_json = load_master_json()
         
-        # Extract work order from first record's QS Number
-        first_qs = records[0].get("QS_Number") or records[0].get("qs_number") or records[0].get("QSNumber")
+        # Extract work order from first record's QS Number (check all possible column names)
+        first_record = records[0]
+        first_qs = (
+            first_record.get("QS Number") or 
+            first_record.get("QS_Number") or 
+            first_record.get("QSNumber") or
+            first_record.get("qs_number") or
+            first_record.get("qsnumber")
+        )
+        
+        # Debug: Log what we got
+        print(f"First record keys: {list(first_record.keys())}")
+        print(f"Extracted QS Number: {first_qs}")
+if not first_qs:
+            os.remove(filepath)
+            return jsonify({
+                'error': 'QS Number column not found in Excel. Expected columns: QS Number, QS_Number, or QSNumber',
+                'columns_found': list(first_record.keys())
+            }), 400
+        
         wo_context = extract_qsid_context(master_json, first_qs)
         
         if not wo_context:
@@ -127,7 +158,9 @@ def upload_file():
             'run_id': run_id,
             'wo_id': str(wo_id),
             'qs_number': first_qs,
-            'message': 'Processing completed successfully'
+            'work_order_id': str(wo_id),
+            'records_processed': len(records),
+            'message': f'Processing completed successfully. {len(records)} records processed.'
         })
     
     except Exception as e:
