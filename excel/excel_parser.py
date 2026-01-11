@@ -9,11 +9,17 @@ def parse_excel_to_snapshot(path: str) -> dict:
     
     # Rename columns to standard format
     column_mapping = {
-        'QS Number': 'QS Number',
-        'QS_Number': 'QS Number',
-        'QSNumber': 'QS Number',
-        'qs number': 'QS Number',
+        'work order no': 'Work Order No',
+        'work_order_no': 'Work Order No',
+        'workorderno': 'Work Order No',
+        'workorder': 'Work Order No',
+        'wo_no': 'Work Order No',
+        'wo_id': 'Work Order No',
+        'work order number': 'Work Order No',
+        'work_order_number': 'Work Order No',
+        'qsnumber': 'QS Number',
         'qs_number': 'QS Number',
+        'qs number': 'QS Number',
         'qsnumber': 'QS Number',
     }
     

@@ -107,41 +107,46 @@ def upload_file():
             os.remove(filepath)
             return jsonify({'error': 'Excel file is empty or invalid format'}), 400
         
-        # Load master context
-        master_json = load_master_json()
-        
-        # Extract work order from first record's QS Number (check all possible column names)
+        # Extract work order ID from first record (check all possible column names)
         first_record = records[0]
-        first_qs = (
-            first_record.get("QS Number") or 
-            first_record.get("QS_Number") or 
-            first_record.get("QSNumber") or
-            first_record.get("qs_number") or
-            first_record.get("qsnumber")
+        work_order_no = (
+            first_record.get("Work Order No") or 
+            first_record.get("work_order_no") or 
+            first_record.get("WorkOrderNo") or
+            first_record.get("work_order_number") or
+            first_record.get("wo_no")
         )
         
         # Debug: Log what we got
         print(f"First record keys: {list(first_record.keys())}")
-        print(f"Extracted QS Number: {first_qs}")
-if not first_qs:
+        print(f"Extracted Work Order No: {work_order_no}")
+        
+        if not work_order_no:
             os.remove(filepath)
             return jsonify({
-                'error': 'QS Number column not found in Excel. Expected columns: QS Number, QS_Number, or QSNumber',
+                'error': 'Work Order No/Number column not found in Excel. Expected columns: Work Order No, Work Order Number, WO_No, etc.',
                 'columns_found': list(first_record.keys())
             }), 400
         
-        wo_context = extract_qsid_context(master_json, first_qs)
-        
-        if not wo_context:
-            os.remove(filepath)
-            return jsonify({'error': f'QS Number {first_qs} not found in master data'}), 404
-        
-        # Get work order ID
-        wo_id = wo_context.get("Work Order No") or wo_context.get("WO_No")
-        
-        if not wo_id:
-            os.remove(filepath)
-            return jsonify({'error': 'Work Order ID not found in context'}), 400
+        # Fetch work order from database
+        session = SessionLocal()
+        try:
+            wo_record = session.query(WorkOrder).filter(
+                WorkOrder.wo_id == str(work_order_no)
+            ).first()
+            
+            if not wo_record:
+                os.remove(filepath)
+                return jsonify({
+                    'error': f'Work Order {work_order_no} not found in database',
+                    'wo_id': str(work_order_no)
+                }), 404
+            
+            wo_id = wo_record.wo_id
+            qs_number = first_record.get("QS Number") or first_record.get("qs_number")
+            
+        finally:
+            session.close()
         
         # Process through agent
         try:
@@ -157,7 +162,7 @@ if not first_qs:
             'success': True,
             'run_id': run_id,
             'wo_id': str(wo_id),
-            'qs_number': first_qs,
+            'qs_number': qs_number,
             'work_order_id': str(wo_id),
             'records_processed': len(records),
             'message': f'Processing completed successfully. {len(records)} records processed.'
